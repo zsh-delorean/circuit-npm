@@ -1,0 +1,23 @@
+#
+# DeLorean npm circuit.
+#
+
+function circuit-npm {
+  if (( ! $+commands[node] )); then
+    return 1
+  fi
+
+  # npm is slow; cache its output.
+  if (( $+commands[npm] )); then
+    local cache_file="${TMPPREFIX}-npm-cache.zsh"
+
+    if [[ "$commands[npm]" -nt "${cache_file}" || ! -s "${cache_file}.zwc" ]]; then
+      npm completion >! "${cache_file}" 2>/dev/null
+      zcompile -Uz "${cache_file}"
+    fi
+
+    source "${cache_file}"
+  fi
+}
+
+return 0
